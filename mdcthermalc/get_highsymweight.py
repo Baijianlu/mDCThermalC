@@ -1,16 +1,18 @@
 # -*- coding: utf-8 -*-
 """
-Created on Thu Mar 14 15:04:54 2019
+Copyright (C) 2019 Tao Fan 
+All rights reserved
 
-@author: Tao.Fan
-This script used to calculate the weight of high symmetry path
+This script used to calculate the weight of each path of high symmetry paths. Such a weight is equal to symmetrical equivalent point
+number of each point in that path.
+
 """
 import numpy as np
 import pymatgen as pmg
 from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
 from pymatgen.symmetry.bandstructure import HighSymmKpath
 
-def Coordcharacter(coord):               #coord is a np.array format
+def Coordcharacter(coord):                                         #coord is a np.array format
     zerocount = np.int(0)
     nonzeroratio = list()
     
@@ -37,7 +39,7 @@ def Coordcharacter(coord):               #coord is a np.array format
     return zerocount, np.array(nonzeroratio)
 
 def get_highsymweight(filename):
-    Mg2Si = pmg.Structure.from_file(filename)       #here should be changed
+    Mg2Si = pmg.Structure.from_file(filename)       
     finder = SpacegroupAnalyzer(Mg2Si)
     symbol = finder.get_space_group_symbol()
     HKpath = HighSymmKpath(Mg2Si)
@@ -52,7 +54,7 @@ def get_highsymweight(filename):
     Keylist = list()
     Coordslist = list()
     for i in np.arange(len(Keys) - 1):
-        if (count-1)%3 == 0:                    #count-1 can be intergely divided by 3
+        if (count-1)%3 == 0:                                        #count-1 can be intergely divided by 3
             Keylist.append(Keys[0])
             Coordslist.append(Coords[0])
             count+=1
@@ -74,7 +76,7 @@ def get_highsymweight(filename):
         for j in np.arange(len(kmesh)):
             (mzerocount,mnonzeroratio) = Coordcharacter(kmesh[j][0])
             if len(mnonzeroratio) == len(nonzeroratio):
-                remainlogic = np.abs(nonzeroratio - mnonzeroratio) < 0.01     # if it is reasonable for 0.01
+                remainlogic = np.abs(nonzeroratio - mnonzeroratio) < 0.01                  # 0.01 is a value can get enough accurate results
                 if zerocount == mzerocount and remainlogic.all():
                     if kmesh[j][1] > Kweight[i]:
                         Kweight[i] = kmesh[j][1]
@@ -84,6 +86,6 @@ def get_highsymweight(filename):
 
 
 if __name__ == '__main__':
-   (Keylist,Coordslist,Kweight) = get_highsymweight("Mg2Si_mp-1367.cif")
+   (Keylist,Coordslist,Kweight) = get_highsymweight("POSCAR")
 
                 
