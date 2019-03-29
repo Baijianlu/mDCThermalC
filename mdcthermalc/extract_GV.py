@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 """
-Created on Wed Jan 16 15:05:43 2019
+Copyright (C) 2019 Tao Fan 
+All rights reserved
 
-@author: Tao.Fan
-This file for extracting group velocity information in band.yaml
+This file is used for extracting group velocity, frequency information in band.yaml.
 
 """
 import os
