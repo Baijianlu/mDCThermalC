@@ -1,0 +1,78 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Tue Mar 19 11:27:09 2019
+
+@author: Tao.Fan
+This is the mainbody part of the mDCThermalC
+
+"""
+import sys
+import os
+import numpy as np
+from mdcthermalc.kappa import Kappa
+from optparse import OptionParser
+from mdcthermalc.get_highsympath import get_highsympath
+
+#we need first get the structure file name and path. Then we need analysis which mode is executed 
+#-p means get the high symmetry path and transform coordinate. -t means calculate kappa
+def optional_arg(arg_default):
+    def func(option, opt_str, value, parser):
+        if parser.rargs and not parser.rargs[0].startswith('-'):
+            val = parser.rargs[0]
+            parser.rargs.pop(0)
+        else:
+            val = arg_default
+        setattr(parser.values, option.dest, val)
+
+    return func
+
+
+usage = "usage: %prog OPTIONS"
+parser = OptionParser(usage=usage)
+parser.add_option("-p", "--highsym_path", dest="spgpath", action="store_true",
+                  help="Obtain high-symmetry path", metavar="HPATH")
+
+parser.add_option("-t", "--Temperature", dest="temp", action='callback', callback=optional_arg('300'),
+                  help="Specific temperature range to be calculated, if no value, the default is 300K", metavar="TEMP")
+
+(options, args) = parser.parse_args()
+if not options.spgpath and not options.temp:
+    parser.error('Please specify -p or -t')
+
+if options.spgpath:
+    #1 get current directory and obtain POSCAR name and temperature
+    file_path = os.getcwd()
+    if os.path.exists(file_path + '/POSCAR'):
+    #2 analysis the structure file
+        filename = file_path + '/POSCAR'
+        get_highsympath(filename)    
+    else:
+        print('No structure file found in current directory')
+    
+    sys.exit(0)
+
+if options.temp:
+    #1 get current directory and obtain POSCAR name
+    file_path = os.getcwd()
+    sTemp = options.temp
+    sTemp = sTemp.strip()
+    sTemp_list = np.double(sTemp.split(":"))
+    if len(sTemp_list) == 1:
+        Temp = np.array(sTemp_list)
+    if len(sTemp_list) == 3:
+        Temp = np.arange(sTemp_list[0],sTemp_list[2]+sTemp_list[1],sTemp_list[1])
+    
+    #2 calculate the thermal conductivity
+    if os.path.exists(file_path + '/POSCAR') and os.path.exists(file_path + '/gruneisen.yaml') and os.path.exists(file_path + '/band.yaml'):
+        Kappa(file_path,Temp)
+    else:
+        print('Not enough input files, please check if POSCAR, gruneisen.yaml and band.yaml are all exist')
+    
+    sys.exit(0)
+
+
+
+
+
+
+
