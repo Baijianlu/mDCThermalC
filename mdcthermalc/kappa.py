@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
 """
-Created on Tue Jan 29 15:11:25 2019
+Copyright (C) 2019 Tao Fan 
+All rights reserved
 
-@author: Tao.Fan 
-this script used for calculating the integral of kappa
-eienstein frequency need to be considered how to calculate, is it equal to Debye frequency?
+This script is the main body to calculate kappa. The necessary input parameters are filepath and temperature range. The total kappa
+is composed of contributions from three acoustic branch and one "representive" optic branch. Heat capacity is used as weight in order
+to obtain the final kappa.
 
 """
 import os
@@ -19,16 +20,13 @@ Planck = scipy.constants.hbar
 Boltzm = scipy.constants.Boltzmann
 atommass = scipy.constants.atomic_mass
 
-def Get_abundancy():
-    return 1.256*1e-4                          ###Mg2Si:4.3387*1e-4   LiMg:0.0010  Al3Li:1.256*1e-4
-
-def t_Umklapp(grun,velo,Debye,mass,T):
+def t_Umklapp(grun,velo,Debye,mass,T):                          #relaxation time of umklapp process
     return (grun**2 * Boltzm**2 * T**3)/(mass * velo**2 * Debye * Planck) * np.exp(-Debye/(3*T))
 
-def t_Normal(grun,velo,mass,vol,T):
+def t_Normal(grun,velo,mass,vol,T):                             #relaxation time of normal process
     return (grun**2 * Boltzm**5 * T**5 * vol)/(mass * velo**5 * Planck**4)
 
-def t_Isotope(velo,vol,abund,T):
+def t_Isotope(velo,vol,abund,T):                                #relaxation time of isotope scattering
     return (vol * Boltzm**4 * abund * T**4)/(4 * np.pi * Planck**4 * velo**3)    
 
 def constC(velo):
@@ -52,24 +50,28 @@ def get_fun5(x,RT_N,RT_U,RT_ISO):
 def get_fun6(x,RT_N,RT_U,RT_ISO):
     return RT_N * (RT_U + RT_ISO * x**2)/(RT_N + RT_U + RT_ISO * x**2) * x**6 * np.exp(x)/(np.exp(x)-1)**2
 
-def HeatCapacity(ADebye, ODebye, T, struct):
-    N = 1                          # number of primitive cell
+def HeatCapacity(ADebye, ODebye, T, struct):                    #function to calculate heat capacity
+    N = 1                                                       # number of primitive cell
     prims = struct.get_primitive_structure()
-    Vol = prims.volume * 1e-30             # primitive cell volume  LiMg:44:791067 Mg2Si:64.4719*1e-30
-    p = prims.composition.num_atoms                          # atom number in primitive cell
+    Vol = prims.volume * 1e-30                                  # primitive cell volume  
+    p = prims.composition.num_atoms                             # atom number in primitive cell
     fun = lambda x: x**4 * np.exp(x)/(np.exp(x)-1)**2
     Cv_aco = 9 * N/Vol * Boltzm * (T/ADebye)**3 * quad(fun,0,ADebye/T)[0]
     Cv_opt = (3*p-3) * N/Vol * Boltzm * (ODebye/T)**2 * np.exp(ODebye/T)/(np.exp(ODebye/T)-1)**2
     return Cv_aco, Cv_opt
 
 def Kappa(filepath,Temp=300.0):
+    """
+    main function to calculate thermal conductivity, filepath must be given, default to calculate at 300 K.
+    
+    """
     struct = pmg.Structure.from_file(filepath + '/POSCAR')
     M_avg = 0.0
     for ele in struct.symbol_set:
         M_avg = M_avg + pmg.Element(ele).atomic_mass * struct.composition.get_atomic_fraction(ele)
     
-    M_avg = atommass * M_avg             ##kg  Mg2Si:25.5625   LiMg:15.623   Al3Li:21.9714
-    V_avg = struct.volume/struct.composition.num_atoms * 1e-30                 ##m^3 Mg2Si:21.49063*1e-30   LiMg:22.3955   Al3Li:16.1203*1e-30
+    M_avg = atommass * M_avg             
+    V_avg = struct.volume/struct.composition.num_atoms * 1e-30                 
     
     (gruneisen,velocity,DebyeT,freq) = Get_GVD(filepath)
     velocity = velocity * 1e2
