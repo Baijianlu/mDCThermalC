@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
 """
-Created on Wed Mar 20 11:57:08 2019
+Copyright (C) 2019 Tao Fan 
+All rights reserved
 
-@author: Tao.Fan
-This script used to calculate the high symmetry path should be used to phonon calculation
+This script used to obtain the exact high symmetry path that should be used for phonon spectrum calculation. The high symmetry path are 
+aranged such that each high symmetry point beside Gamma point have one and only have one connection with Gamma point.
 
 """
 import os
@@ -13,7 +14,7 @@ import pymatgen as pmg
 from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
 from pymatgen.symmetry.bandstructure import HighSymmKpath
 
-def Coordcharacter(coord):               #coord is a np.array format
+def Coordcharacter(coord):                                      #coord is a np.array format
     zerocount = np.int(0)
     nonzeroratio = list()
     
@@ -40,7 +41,7 @@ def Coordcharacter(coord):               #coord is a np.array format
     return zerocount, np.array(nonzeroratio)
 
 def get_highsympath(filename):
-    struct = pmg.Structure.from_file(filename)       #here should be changed
+    struct = pmg.Structure.from_file(filename)      
     finder = SpacegroupAnalyzer(struct)
     HKpath = HighSymmKpath(struct)
     Keys = list()
@@ -54,7 +55,7 @@ def get_highsympath(filename):
     Keylist = list()
     Coordslist = list()
     for i in np.arange(len(Keys) - 1):
-        if (count-1)%3 == 0:                    #count-1 can be intergely divided by 3
+        if (count-1)%3 == 0:                                   #count-1 can be intergely divided by 3
             Keylist.append(Keys[0])
             Coordslist.append(Coords[0])
             count+=1
@@ -88,4 +89,4 @@ def get_highsympath(filename):
 
 
 if __name__ == '__main__':
-   (Keylist,Coordslist) = get_highsympath("Mg2Si_mp-1367.cif")
+   (Keylist,Coordslist) = get_highsympath("POSCAR")
