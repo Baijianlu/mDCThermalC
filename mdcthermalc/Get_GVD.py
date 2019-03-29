@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
 """
-Created on Mon Jan 28 15:16:02 2019
+Copyright (C) 2019 Tao Fan 
+All rights reserved
 
-@author: Tao.Fan 
-this script for calculating the gruneisen,velocity,DebyeT used for kappa calculation,
-they are all four dimension
+This script is used for obtaining the Gruneisen parameter, group velocity and Debye temperature for kappa calculation,
+they are all four dimension including three acoustic branches and one "representive" optic branch.
+
 """
 import numpy as np
 import scipy.constants
@@ -30,6 +31,7 @@ def Get_GVD(filepath):
     freq[0:3] = branchfreq[0:3]
     weightsum = np.sum(branchfreq[3:])
     
+    #The following is for optic branch 
     for i in np.arange(3,len(branchfreq)):
         gruneisen[3] = gruneisen[3] + branchfreq[i] * branchgrun[i]
         velocity[3] = velocity[3] + branchfreq[i] * branchvel[i]
