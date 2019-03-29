@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
 """
-Created on Fri Jan 18 17:22:04 2019
+Copyright (C) 2019 Tao Fan 
+All rights reserved
 
-@author: Tao.Fan
-This script for extracting Gruneisen parameter in gruneisen.yaml 
+This script is used for extracting Gruneisen parameter in gruneisen.yaml 
+
 """
 import numpy as np
 
