@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
 """
-Created on Fri Feb 22 15:11:56 2019
-@author: Tao.Fan
-This script for calculating mass-fluctuation phonon-scattering parameter Gamma
+Copyright (C) 2019 Tao Fan 
+All rights reserved
+
+This script is used for calculating mass-fluctuation phonon-scattering parameter.
+
 """
 import numpy as np
 import pymatgen as pmg
@@ -30,4 +32,3 @@ def calc_MFPS(Elem_tabl):
 
 if __name__ == '__main__':
    MFPS = calc_MFPS(['Ga','N'])
-#   print("%.4e" % MFPS)
