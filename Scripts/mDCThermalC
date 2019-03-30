@@ -32,12 +32,22 @@ parser = OptionParser(usage=usage)
 parser.add_option("-p", "--highsym_path", dest="spgpath", action="store_true",
                   help="Obtain high-symmetry path", metavar="HPATH")
 
-parser.add_option("-t", "--Temperature", dest="temp", action='callback', callback=optional_arg('300'),
+parser.add_option("-t", "--temperature", dest="temp", action='callback', callback=optional_arg('300'),
                   help="Specific temperature range to be calculated, if no value, the default is 300K", metavar="TEMP")
 
+parser.add_option("-v", "--version", dest="version", action="store_true",
+                  help="Obtain current version of the software", metavar="VERS")
+
 (options, args) = parser.parse_args()
-if not options.spgpath and not options.temp:
-    parser.error('Please specify -p or -t')
+
+if not options.spgpath and not options.temp and not options.version:
+    parser.error('Please specify -p, -t or -v')
+    
+if options.version:
+    Version = '1.1.1'
+    print('\n  mDCThermalC %s\n' % (Version))
+    
+    sys.exit(0)
 
 if options.spgpath:
     #1 get current directory and obtain POSCAR name and temperature
