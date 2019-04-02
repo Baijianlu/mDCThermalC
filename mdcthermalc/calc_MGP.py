@@ -24,7 +24,7 @@ def calc_MGP(filepath,weight):                                     #Gamma:the po
         if Gamma_index[i,0] == Gamma_index[i,1]:Pathnum = Pathnum + 1
         else: Pathnum = Pathnum + 2
         
-    modebranch_grun = np.zeros((Bandnum,Pathnum,51))              # value for each path in each branch
+    modebranch_grun = np.zeros((Bandnum,Pathnum,50))              # value for each path in each branch, exclude Gamma point
     branch_grun = np.zeros(Bandnum)                               #average value for different branch
     
     for branch_idx in np.arange(Bandnum):
@@ -32,19 +32,19 @@ def calc_MGP(filepath,weight):                                     #Gamma:the po
             for k in np.arange(2):
                 if k == 0:
                     if Gamma_index[j,k] > Minindex:
-                        modebranch_grun[branch_idx,j*2 + k] = [Gruneisen[np.int(index),branch_idx]['grun'] for index in np.arange(Gamma_index[j,k]-50,Gamma_index[j,k]+1)]
+                        modebranch_grun[branch_idx,j*2 + k] = [Gruneisen[np.int(index),branch_idx]['grun'] for index in np.arange(Gamma_index[j,k]-50,Gamma_index[j,k])]
                     else:
-                        modebranch_grun[branch_idx,j*2 + k] = [Gruneisen[np.int(index),branch_idx]['grun'] for index in np.arange(Gamma_index[j,k],Gamma_index[j,k]+51)]
+                        modebranch_grun[branch_idx,j*2 + k] = [Gruneisen[np.int(index),branch_idx]['grun'] for index in np.arange(Gamma_index[j,k]+1,Gamma_index[j,k]+51)]
                         break
                 if k == 1:
                     if Gamma_index[j,k] < Maxindex:
-                        modebranch_grun[branch_idx,j*2 + k] = [Gruneisen[np.int(index),branch_idx]['grun'] for index in np.arange(Gamma_index[j,k],Gamma_index[j,k]+51)]
+                        modebranch_grun[branch_idx,j*2 + k] = [Gruneisen[np.int(index),branch_idx]['grun'] for index in np.arange(Gamma_index[j,k]+1,Gamma_index[j,k]+51)]
                     else:
                         break
                     
     for branch_idx in np.arange(Bandnum):
         for j in np.arange(len(weight)):
-            branch_grun[branch_idx] = branch_grun[branch_idx] + weight[j] * np.power(np.average(modebranch_grun[branch_idx,j,:]),2)
+            branch_grun[branch_idx] = branch_grun[branch_idx] + weight[j] * np.power(np.average(np.abs(modebranch_grun[branch_idx,j,:])),2)
         branch_grun[branch_idx] = np.sqrt(branch_grun[branch_idx] / np.sum(weight))    
 
     
