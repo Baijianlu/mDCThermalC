@@ -81,7 +81,7 @@ def get_highsympath(filename):
         transmat = inv(S_T) @ P_T
         print('We notice your structure could have a primitive cell. Please set \"PRIMITIVE_AXIS\" parameter of phonopy as this:%s' % os.linesep)
         for coord in transmat:
-            print('%.3f %.3f %.3f  ' % (coord[0], coord[1], coord[2]), end='')
+            print('%.8f %.8f %.8f  ' % (coord[0], coord[1], coord[2]), end='')
         print('%s' % os.linesep)
         
         
