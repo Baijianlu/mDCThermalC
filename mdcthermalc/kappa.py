@@ -78,7 +78,7 @@ def Kappa(filepath,Temp=300.0):
     abund = calc_MFPS(list(struct.symbol_set))
     kappa = np.zeros(4)
     avgkappa = np.zeros(len(Temp))
-    ADebye = np.sum(DebyeT[0:3]*freq[0:3])/np.sum(freq[0:3])
+    ADebye = DebyeT[2]                                          #np.sum(DebyeT[0:3]*freq[0:3])/np.sum(freq[0:3])
     ODebye = DebyeT[3]
     
     fp = open('kappa','w')
