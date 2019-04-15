@@ -82,7 +82,8 @@ def Kappa(filepath,Temp=300.0):
     ODebye = DebyeT[3]
     
     fp = open('kappa','w')
-    fp.write('Temp[K]     Kappa[W*m/K]     R_A     R_O%s' % os.linesep)
+    fp.write('Temp[K]     Kappa[W*m/K]     R_A     R_O     TA_N        TA_U        TA_ISO      \
+TA\'_N       TA\'_U       TA\'_ISO     LA_N        LA_U        LA_ISO      O_N         O_U         O_ISO       %s' % os.linesep)
     
     for k in np.arange(len(Temp)):
         T = Temp[k]
@@ -97,6 +98,9 @@ def Kappa(filepath,Temp=300.0):
                 BettaT_2 = quad(get_fun3, 0.0, DebyeT[branch]/T, args=(t_TN,t_TU,t_TISO))[0]
                 IT_2 = C_T * T**3 * BettaT_1**2/BettaT_2
                 kappa[branch] = IT_1 + IT_2
+                relaxtime[branch,0] = 1 / (t_TN * DebyeT[branch]/T)
+                relaxtime[branch,1] = 1 / (t_TU * (DebyeT[branch]/T)**2)
+                relaxtime[branch,2] = 1 / (t_TISO * (DebyeT[branch]/T)**4)
             elif branch == 2:
                 t_LU = t_Umklapp(gruneisen[branch],velocity[branch],DebyeT[branch],M_avg,T)
                 t_LN = t_Normal(gruneisen[branch],velocity[branch],M_avg,V_avg,T)
@@ -106,7 +110,10 @@ def Kappa(filepath,Temp=300.0):
                 BettaL_1 = quad(get_fun5, 0.0, DebyeT[branch]/T, args=(t_LN,t_LU,t_LISO))[0]
                 BettaL_2 = quad(get_fun6, 0.0, DebyeT[branch]/T, args=(t_LN,t_LU,t_LISO))[0]
                 IL_2 = C_L * T**3 * BettaL_1**2/BettaL_2
-                kappa[branch] = IL_1 + IL_2                        
+                kappa[branch] = IL_1 + IL_2
+                relaxtime[branch,0] = 1 / (t_LN * (DebyeT[branch]/T)**2)
+                relaxtime[branch,1] = 1 / (t_LU * (DebyeT[branch]/T)**2)
+                relaxtime[branch,2] = 1 / (t_LISO * (DebyeT[branch]/T)**4)
             else:
                 t_OU = t_Umklapp(gruneisen[branch],velocity[branch],DebyeT[branch],M_avg,T)
                 t_ON = t_Normal(gruneisen[branch],velocity[branch],M_avg,V_avg,T)
@@ -116,12 +123,19 @@ def Kappa(filepath,Temp=300.0):
                 BettaO_1 = quad(get_fun5, 0.0, DebyeT[branch]/T, args=(t_ON,t_OU,t_OISO))[0]
                 BettaO_2 = quad(get_fun6, 0.0, DebyeT[branch]/T, args=(t_ON,t_OU,t_OISO))[0]
                 IO_2 = C_O * T**3 * BettaO_1**2/BettaO_2
-                kappa[branch] = IO_1 + IO_2                         
+                kappa[branch] = IO_1 + IO_2
+                relaxtime[branch,0] = 1 / (t_ON * (DebyeT[branch]/T)**2)
+                relaxtime[branch,1] = 1 / (t_OU * (DebyeT[branch]/T)**2)
+                relaxtime[branch,2] = 1 / (t_OISO * (DebyeT[branch]/T)**4)
+        
         (Cv_a, Cv_o) = HeatCapacity(ADebye,ODebye,T,struct)
         Rat = Cv_a/(Cv_a+Cv_o)
         avgkappa[k] = Rat * np.average(kappa[0:3]) + (1-Rat) * kappa[3]
         
-        fp.write('%-12.1f%-17.3f%-8.3f%-.3f%s' % (T,avgkappa[k],Rat,1-Rat,os.linesep))
+        fp.write('%-12.1f%-17.3f%-8.3f%-8.3f' % (T,avgkappa[k],Rat,1-Rat))
+        for time in relaxtime:
+            fp.write('%-12.3e%-12.3e%-12.3e' % (time[0],time[1],time[2]))
+        fp.write('%s' % os.linesep)
     
     fp.close()
     return avgkappa
