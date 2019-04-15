@@ -80,6 +80,7 @@ def Kappa(filepath,Temp=300.0):
     avgkappa = np.zeros(len(Temp))
     ADebye = DebyeT[2]                                          #np.sum(DebyeT[0:3]*freq[0:3])/np.sum(freq[0:3])
     ODebye = DebyeT[3]
+    relaxtime = np.zeros((4,3))
     
     fp = open('kappa','w')
     fp.write('Temp[K]     Kappa[W*m/K]     R_A     R_O     TA_N        TA_U        TA_ISO      \
