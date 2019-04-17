@@ -83,7 +83,7 @@ def Kappa(filepath,Temp=300.0):
     relaxtime = np.zeros((4,3))
     
     fp = open('kappa','w')
-    fp.write('Temp[K]     Kappa[W*m/K]     R_A     R_O     TA_N        TA_U        TA_ISO      \
+    fp.write('Temp[K]     Kappa[W/(m*K)]     R_A     R_O     TA_N        TA_U        TA_ISO      \
 TA\'_N       TA\'_U       TA\'_ISO     LA_N        LA_U        LA_ISO      O_N         O_U         O_ISO       %s' % os.linesep)
     
     for k in np.arange(len(Temp)):
