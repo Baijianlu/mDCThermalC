@@ -7,7 +7,7 @@ mDCThermalC has a DOI:10.5281/zenodo.2617208, you can cite this code like this:
     Tao Fan. (2019, March 30). Baijianlu/mDCThermalC: First version of mDCThermalC (Version v1.1.1-beta). Zenodo. http://doi.org/10.5281/zenodo.2617208
 
 ## prerequisites
-mDCThermalC is a Python module. mDCThermalC's runtime requirements are Python version 3.5 or higher, and the Python libraries [NumPy](http://www.numpy.org/), [SciPy](https://www.scipy.org/), [spglib](https://atztogo.github.io/spglib/) and [pymatgen](http://pymatgen.org/index.html).  All of them can be easily obtained from the [Python Package Index](https://pypi.python.org/pypi) (PyPI), using tools such as pip. They may also be bundled with Python distributions aimed at scientists, like [Anaconda](https://anaconda.org/), and with a number of Linux distributions. If pip is used to install BoltzTraP2, dependencies should be resolved automatically.
+mDCThermalC is a Python module. mDCThermalC's runtime requirements are Python version 3.5 or higher, and the Python libraries [NumPy](http://www.numpy.org/), [SciPy](https://www.scipy.org/), [spglib](https://atztogo.github.io/spglib/) and [pymatgen](http://pymatgen.org/index.html).  All of them can be easily obtained from the [Python Package Index](https://pypi.python.org/pypi) (PyPI), using tools such as pip. They may also be bundled with Python distributions aimed at scientists, like [Anaconda](https://anaconda.org/), and with a number of Linux distributions. Here we recommend to use Anaconda so that dependencies should be resolved automatically.
 
 ## Compiling and install mDCThermalC
 Users installing from source must install the dependencies first and then run:
@@ -15,4 +15,4 @@ Users installing from source must install the dependencies first and then run:
     $ python setup.py install
     
 ## Running the tests
-mDCThermalC comes with several sets of examples to test its core functionality. change to the corresponding directory and use the command:
+The distribution includes four examples: diamond, Si, SnSe, Mg2Si. The former three examples are also described in the mDCThermalC [paper](). Read /doc/UserManual to learn how to use this software and more information about the output files. 
