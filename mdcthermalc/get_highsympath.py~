@@ -68,7 +68,7 @@ def get_highsympath(filename):
         Keylist.append(Keys[0])
         Coordslist.append(Coords[0])
         
-    prims = finder.get_primitive_standard_structure()
+    prims = finder.find_primitive()
     
     print('Please set \"BAND\" parameter of phonopy as this:%s' % os.linesep)
     for coord in Coordslist:
