@@ -18,10 +18,10 @@ except ImportError:
     use_setuptools = False
     print("distutils is used.")
     
-extension_mDCThermalC = Extension('mdcthermalc._extern', sources = [])
+extension_mDCThermalC = Extension('AICON._extern', sources = [])
 ext_modules_mDCThermalC = [extension_mDCThermalC]
 packages_mDCThermalC = ['mdcthermalc']
-scripts_mDCThermalC = ['Scripts/mDCThermalC']
+scripts_mDCThermalC = ['Scripts/AICON']
 
 if __name__ == '__main__':
 
@@ -41,26 +41,26 @@ if __name__ == '__main__':
     version_number = ".".join(["%d" % n for n in version_nums])
 
     if use_setuptools:
-        setup(name='mdcthermalc',
+        setup(name='aicon',
               version=version_number,
-              description='This is the mDCThermalC module.',
+              description='This is the aicon module.',
               author='Tao Fan',
               author_email='Tao.Fan@skoltech.ru',
               url='https://github.com/Baijianlu/mDCThermalC',
               packages=packages_mDCThermalC,
               install_requires=['numpy', 'scipy', 'pymatgen'],
-              provides=['mdcthermalc'],
+              provides=['aicon'],
               scripts=scripts_mDCThermalC,
               ext_modules=ext_modules_mDCThermalC)
     else:
-        setup(name='mdcthermalc',
+        setup(name='aicon',
               version=version_number,
-              description='This is the mDCThermalC module.',
+              description='This is the AICON module.',
               author='Tao Fan',
               author_email='Tao.Fan@skoltech.ru',
               url='https://github.com/Baijianlu/mDCThermalC',
               packages=packages_mDCThermalC,
               requires=['numpy', 'scipy', 'pymatgen'],
-              provides=['mdcthermalc'],
+              provides=['aicon'],
               scripts=scripts_mDCThermalC,
               ext_modules=ext_modules_mDCThermalC)
