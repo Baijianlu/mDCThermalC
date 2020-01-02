@@ -4,7 +4,7 @@ AICON is a program aims to achieve fast and accurate estimation of transport pro
 
 AICON has a DOI:10.1016/j.cpc.2019.107074, you can cite this code like this:
 
-    Tao Fan, Artem R. Oganov, mDCThermalC: A program for calculating thermal conductivity quickly and accurately, Comput. Phys. Comm.(2019), DOI:10.1016/j.cpc.2019.107074
+    Tao Fan, Artem R. Oganov, AICON: A program for calculating thermal conductivity quickly and accurately, Comput. Phys. Comm.(2019), 107074, https://doi.org/10.1016/j.cpc.2019.107074
 
 ## prerequisites
 AICON is a Python module. AICON's runtime requirements are Python version 3.5 or higher, and the Python libraries [NumPy](http://www.numpy.org/), [SciPy](https://www.scipy.org/), [spglib](https://atztogo.github.io/spglib/) and [pymatgen](http://pymatgen.org/index.html).  All of them can be easily obtained from the [Python Package Index](https://pypi.python.org/pypi) (PyPI), using tools such as pip. They may also be bundled with Python distributions aimed at scientists, like [Anaconda](https://anaconda.org/), and with a number of Linux distributions. Here we recommend to use Anaconda so that dependencies should be resolved automatically.
