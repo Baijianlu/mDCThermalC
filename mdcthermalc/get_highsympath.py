@@ -75,7 +75,7 @@ def get_highsympath(filename):
         print('%.4f %.4f %.4f  ' % (coord[0], coord[1], coord[2]), end='')
     print('%s' % os.linesep)
     
-    if struct != prims:
+    if prims.matches(struct,primitive_cell=False, scale=False) == False:
         S_T = np.transpose(struct.lattice.matrix)
         P_T = np.transpose(prims.lattice.matrix)
         transmat = inv(S_T) @ P_T
