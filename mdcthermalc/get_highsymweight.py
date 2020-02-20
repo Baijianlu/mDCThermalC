@@ -12,77 +12,43 @@ import pymatgen as pmg
 from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
 from pymatgen.symmetry.bandstructure import HighSymmKpath
 
-def Coordcharacter(coord):                                         #coord is a np.array format
-    zerocount = np.int(0)
-    nonzeroratio = list()
+def pbc_diff(fcoords1, fcoords2):
+    fdist = np.subtract(fcoords1, fcoords2)
+    return fdist - np.round(fdist)
     
-    nonPos = coord.nonzero()[0]
-    zerocount = 3 - len(nonPos)
+def get_sym_eq_kpoints(struct, kpoint, cartesian=False, tol=1e-2):
+    if not struct:
+        return None
     
-    if zerocount == 0:
-        nonzeroratio.append(coord[0]/coord[1])
-        nonzeroratio.append(coord[1]/coord[0])
-        nonzeroratio.append(coord[0]/coord[2])
-        nonzeroratio.append(coord[2]/coord[0])
-        nonzeroratio.append(coord[1]/coord[2])
-        nonzeroratio.append(coord[2]/coord[1])
-    elif zerocount == 1:
-        nonzeroratio.append(coord[nonPos[0]]/coord[nonPos[1]])
-        nonzeroratio.append(coord[nonPos[1]]/coord[nonPos[0]])
-    elif zerocount == 2:
-        nonzeroratio.append(coord[nonPos[0]]/coord[nonPos[0]])
-    else:
-        pass
-    
-    nonzeroratio.sort()
-    
-    return zerocount, np.array(nonzeroratio)
+    sg = SpacegroupAnalyzer(struct)
+    symmops = sg.get_point_group_operations(cartesian=cartesian)
+    points = np.dot(kpoint, [m.rotation_matrix for m in symmops])
+    rm_list = []
+    # identify and remove duplicates from the list of equivalent k-points:
+    for i in range(len(points) - 1):
+        for j in range(i + 1, len(points)):
+            if np.allclose(pbc_diff(points[i], points[j]), [0, 0, 0], tol):
+                rm_list.append(i)
+                break
+    return np.delete(points, rm_list, axis=0)
 
 def get_highsymweight(filename):
-    Mg2Si = pmg.Structure.from_file(filename)       
-    finder = SpacegroupAnalyzer(Mg2Si)
-    symbol = finder.get_space_group_symbol()
-    HKpath = HighSymmKpath(Mg2Si)
+    struct = pmg.Structure.from_file(filename)       #here should be changed
+    HKpath = HighSymmKpath(struct)
     Keys = list()
     Coords = list()
-    
+        
     for key in HKpath.kpath['kpoints']:
         Keys.append(key)
         Coords.append(HKpath.kpath['kpoints'][key])
-        
-    count = 0
-    Keylist = list()
-    Coordslist = list()
-    for i in np.arange(len(Keys) - 1):
-        if (count-1)%3 == 0:                                        #count-1 can be intergely divided by 3
-            Keylist.append(Keys[0])
-            Coordslist.append(Coords[0])
-            count+=1
-            
-        Keylist.append(Keys[i+1])
-        Coordslist.append(Coords[i+1])
-        count+=1
-        
-    if (count-1)%3 == 0:
-        Keylist.append(Keys[0])
-        Coordslist.append(Coords[0])
-        
-    Kweight = np.zeros(len(Keys) - 1)
-    kmesh = finder.get_ir_reciprocal_mesh(mesh=(50,50,50))
-        
-    for i in np.arange(len(Keys) - 1):
-        (zerocount,nonzeroratio) = Coordcharacter(Coords[i+1])
-        
-        for j in np.arange(len(kmesh)):
-            (mzerocount,mnonzeroratio) = Coordcharacter(kmesh[j][0])
-            if len(mnonzeroratio) == len(nonzeroratio):
-                remainlogic = np.abs(nonzeroratio - mnonzeroratio) < 0.01                  # 0.01 is a value can get enough accurate results
-                if zerocount == mzerocount and remainlogic.all():
-                    if kmesh[j][1] > Kweight[i]:
-                        Kweight[i] = kmesh[j][1]
-            else: pass
     
-    return Keylist, Coordslist, Kweight
+    Kweight = list()
+        
+    for i in np.arange(len(Keys)):
+        if Keys[i] != '\Gamma':
+           Kweight.append(len(get_sym_eq_kpoints(struct, Coords[i]*0.5))) 
+        
+    return Keys, Coords, Kweight
 
 
 if __name__ == '__main__':
